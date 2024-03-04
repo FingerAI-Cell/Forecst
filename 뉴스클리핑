@@ -1,0 +1,121 @@
+1. 디지털 플랫폼
+2. 금융
+3. 핀테크/테크핀
+4. 금융서비스
+5. 벤처
+6. 스타트업
+
+매주 월요일 오전 8시
+메일주소 yjbyun@finger.co.kr 로 수령
+
+
+
+
+
+
+function getNewsArticles() {
+  // Set the number of articles to retrieve
+  var numArticles = 10;
+
+  // Define keyword-category mappings
+  var mappings = {
+    '인공지능': 'AI',
+    'GPT': 'GPT',
+    '금융인공지능': 'Finance AI',
+    '생성형인공지능': 'Generative AI',
+    '금융뉴스': 'Finance News',
+    'CBDC': 'CBDC'  // Added CBDC keyword and category
+  };
+
+  // Prepare the content for each category
+  var content = '';
+  for (var keyword in mappings) {
+    if (mappings.hasOwnProperty(keyword)) {
+      var category = mappings[keyword];
+      var apiUrl = "https://news.google.com/rss/search?q=" + keyword + "&hl=ko&gl=KR&ceid=KR:ko";
+
+      // Fetch news articles
+      var response = UrlFetchApp.fetch(apiUrl, {'muteHttpExceptions': true});
+      if (response.getResponseCode() === 200) {
+        var document = XmlService.parse(response.getContentText());
+        var root = document.getRootElement();
+        var items = root.getChild('channel').getChildren('item');
+
+        // Extract news information
+        var articles = [];
+        for (var i = 0; i < numArticles && i < items.length; i++) {
+          var item = items[i];
+          var title = item.getChild('title').getText();
+          var link = item.getChild('link').getText();
+          var description = item.getChild('description').getText();
+          articles.push('<b>' + title + '</b><br>' + description + '<br><a href="' + link + '">' + link + '</a><br><br>');
+        }
+
+        // Add to the overall content
+        content += '<h2>' + category + ' 뉴스 Top ' + numArticles + '</h2>' + articles.join('');
+      } else {
+        Utilities.sleep(1000); // Wait for 1 second if there is an error
+      }
+    }
+  }
+
+  // Send the news articles to your email
+  var subject = '다양한 인공지능 및 CBDC 뉴스 Top ' + numArticles;  // Updated subject
+  MailApp.sendEmail('leo90@kakao.com', subject, '', {htmlBody: content});
+}
+
+기존 뉴스클리핑 내용
+
+function getNewsArticles() {
+  // Set the number of articles to retrieve
+  var numArticles = 10;
+
+  // Define keyword-category mappings for the new titles
+  var mappings = {
+    '디지털 플랫폼': 'Digital Platform',
+    '금융': 'Finance',
+    '핀테크': 'Fintech',
+    '테크핀': 'Techfin',
+    '금융서비스': 'Financial Services',
+    '벤처': 'Venture',
+    '스타트업': 'Startup'
+  };
+
+  // Prepare the content for each category
+  var content = '';
+  for (var keyword in mappings) {
+    if (mappings.hasOwnProperty(keyword)) {
+      var category = mappings[keyword];
+      var apiUrl = "https://news.google.com/rss/search?q=" + keyword + "&hl=ko&gl=KR&ceid=KR:ko";
+
+      // Fetch news articles
+      var response = UrlFetchApp.fetch(apiUrl, {'muteHttpExceptions': true});
+      if (response.getResponseCode() === 200) {
+        var document = XmlService.parse(response.getContentText());
+        var root = document.getRootElement();
+        var items = root.getChild('channel').getChildren('item');
+
+        // Extract news information
+        var articles = [];
+        for (var i = 0; i < numArticles && i < items.length; i++) {
+          var item = items[i];
+          var title = item.getChild('title').getText();
+          var link = item.getChild('link').getText();
+          var description = item.getChild('description').getText();
+          articles.push('<b>' + title + '</b><br>' + description + '<br><a href="' + link + '">Read more</a><br><br>');
+        }
+
+        // Add to the overall content
+        content += '<h2>' + category + ' News Top ' + numArticles + '</h2>' + articles.join('');
+      } else {
+        Utilities.sleep(1000); // Wait for 1 second if there is an error
+      }
+    }
+  }
+
+  // Send the news articles to your email
+  var subject = 'Weekly News Update: Digital Platform, Finance, Fintech/Techfin, Financial Services, Venture, Startup';  
+  MailApp.sendEmail('leo@finger.co.kr', subject, '', {htmlBody: content});
+}
+
+변경후 내용
